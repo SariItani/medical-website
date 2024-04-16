@@ -57,6 +57,11 @@ def home():
     
     if request.method == 'POST':
         print(request.form)
+        dob = request.form['dob']
+        sex = request.form['sex']
+        allergies = request.form['allergies']
+        medications = request.form['medications']
+        print(dob, sex, allergies, medications)
 
     medical_profile = current_user.medical_profile
     return render_template('home.html', medical_profile=medical_profile)
