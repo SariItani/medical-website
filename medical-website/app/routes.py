@@ -26,16 +26,12 @@ TWILIO_PHONE = '+447883319816'
 
 def run_conversation(prompt):
     client = OpenAI(api_key=API_KEY)
-
     messages = [{"role": "user", "content": prompt}]
-
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=messages
     )
-
     response_text = response.choices[0].message.content
-
     return response_text
 
 
