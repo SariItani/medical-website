@@ -1,3 +1,11 @@
+{% extends 'index.html' %} 
+
+{% block title %}Medical Profile{% endblock %} 
+
+{% block morecss %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}"/>
+{% endblock %}
+
 {% block content %}
 <section class="masthead text-center" style="background-color: rgb(203, 255, 238)" id="portfolio">
     <div class="container d-flex align-items-left flex-column">
@@ -43,3 +51,8 @@
     </div>
 </section>
 {% endblock %}
+
+
+{% block morejs %}
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+{%endblock%}
