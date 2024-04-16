@@ -31,6 +31,37 @@ class User(UserMixin, db.Model):
         self.bio = bio
         
 
+class MedicalProfile(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    dob = db.Column(db.Date)
+    sex = db.Column(db.Text)
+
+    # Medical History
+    allergies = db.Column(db.Text)
+    medications = db.Column(db.Text)  # Consider using a separate table for medications with details like dosage and frequency
+    conditions = db.Column(db.Text)  # Consider using a separate table for conditions with details like diagnosis date and severity
+    immunizations = db.Column(db.Text)  # Consider a separate table for detailed immunization records
+    surgical_history = db.Column(db.Text)  # Consider a separate table for details on past surgeries
+
+    # Administrative Information
+    emergency_contact_name = db.Column(db.Text)
+    emergency_contact_phone = db.Column(db.Text)
+    insurance_provider = db.Column(db.Text)
+    insurance_id = db.Column(db.Text)
+    primary_care_physician_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
+    primary_care_physician = db.relationship('Doctor', backref='patients')
+
+
+    # Other relevant fields
+    blood_type = db.Column(db.Text)
+    smoking_status = db.Column(db.Boolean)
+    family_history = db.Column(db.Text)
+
+    user = db.relationship('User', backref=db.backref('medical_profile', uselist=False))
+        
+
 class Doctor(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
