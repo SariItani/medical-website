@@ -149,7 +149,9 @@ def mcq():
 @login_required
 def qst():
     if request.method == 'POST':
-        return redirect(url_for('chat'))
+        symptoms = request.form.getlist('symptoms[]')
+        print(symptoms)
+        return redirect(url_for('qst'))
     return render_template('qst.html')
 
 
