@@ -5,7 +5,7 @@ from flask import jsonify, redirect, render_template, request, url_for, flash
 from flask_login import login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 import requests
-from app import app, login_manager, User, db, Message
+from app import app, login_manager, User, db, Message, Doctor, MedicalProfile
 from datetime import datetime
 from openai import OpenAI
 import os
@@ -50,10 +50,16 @@ def index():
     return render_template('index.html', username=username, imgpath=imgpath, bio=bio)
 
 
-@app.route('/home')
+@app.route('/home', methods=['POST', 'GET'])
 @login_required
 def home():
-    return render_template('home.html')
+    user = current_user
+    
+    if request.method == 'POST':
+        print(request.form)
+
+    medical_profile = current_user.medical_profile
+    return render_template('home.html', medical_profile=medical_profile)
 
 
 @app.route('/chat')

@@ -60,7 +60,7 @@ class MedicalProfile(db.Model):
     family_history = db.Column(db.Text)
 
     user = db.relationship('User', backref=db.backref('medical_profile', uselist=False))
-    
+
     def __init__(self, dob, sex, allergies, medications, conditions, immunizations, surgical_history, emergency_contact_name, emergency_contact_phone, insurance_provider, insurance_id, primary_care_physician, blood_type, smoking_status, family_history):
         self.dob = dob
         self.sex = sex
