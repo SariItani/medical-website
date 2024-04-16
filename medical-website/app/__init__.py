@@ -40,10 +40,10 @@ class MedicalProfile(db.Model):
 
     # Medical History
     allergies = db.Column(db.Text)
-    medications = db.Column(db.Text)  # Consider using a separate table for medications with details like dosage and frequency
-    conditions = db.Column(db.Text)  # Consider using a separate table for conditions with details like diagnosis date and severity
-    immunizations = db.Column(db.Text)  # Consider a separate table for detailed immunization records
-    surgical_history = db.Column(db.Text)  # Consider a separate table for details on past surgeries
+    medications = db.Column(db.Text)
+    conditions = db.Column(db.Text)
+    immunizations = db.Column(db.Text)
+    surgical_history = db.Column(db.Text)
 
     # Administrative Information
     emergency_contact_name = db.Column(db.Text)
