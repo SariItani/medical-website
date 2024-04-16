@@ -60,7 +60,7 @@ class MedicalProfile(db.Model):
 
     user = db.relationship('User', backref=db.backref('medical_profile', uselist=False))
 
-    def __init__(self, blood_type, smoking_status, dob, sex, emergency_contact_name='None', emergency_contact_phone='None', allergies=None, medications=None, conditions=None, immunizations=None, surgical_history=None, insurance_provider=None, primary_care_physician=None, family_history=None):
+    def __init__(self, user, blood_type, smoking_status, dob, sex, emergency_contact_name='None', emergency_contact_phone='None', allergies=None, medications=None, conditions=None, immunizations=None, surgical_history=None, insurance_provider=None, primary_care_physician=None, family_history=None):
         self.dob = dob
         self.sex = sex
         self.allergies = allergies
@@ -75,6 +75,7 @@ class MedicalProfile(db.Model):
         self.blood_type = blood_type
         self.smoking_status = smoking_status
         self.family_history = family_history
+        self.user = user
         
 
 class Doctor(UserMixin, db.Model):

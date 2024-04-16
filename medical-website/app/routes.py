@@ -54,16 +54,50 @@ def index():
 @login_required
 def home():
     user = current_user
-    
+    medical_profile = user.medical_profile
+
     if request.method == 'POST':
-        print(request.form)
-        dob = request.form['dob']
+        dob_str = request.form['dob']
+        dob = datetime.strptime(dob_str, '%Y-%m-%d').date()
         sex = request.form['sex']
         allergies = request.form['allergies']
         medications = request.form['medications']
-        print(dob, sex, allergies, medications)
+        emergency_contact_name = request.form['emergency_contact_name']
+        emergency_contact_phone = request.form['emergency_contact_phone']
+        blood_type = request.form['blood_type']
+        smoking_status = request.form['smoking_status']
+        if smoking_status == 'false':
+            smoking_status = False
+        else:
+            smoking_status = True
 
-    medical_profile = current_user.medical_profile
+        if not medical_profile:
+            medical_profile = MedicalProfile(
+                user=user,
+                dob=dob,
+                sex=sex,
+                allergies=allergies,
+                medications=medications,
+                emergency_contact_name=emergency_contact_name,
+                emergency_contact_phone=emergency_contact_phone,
+                blood_type=blood_type,
+                smoking_status=smoking_status
+            )
+        else:
+            medical_profile.dob = dob
+            medical_profile.sex = sex
+            medical_profile.allergies = allergies
+            medical_profile.medications = medications
+            medical_profile.emergency_contact_name = emergency_contact_name
+            medical_profile.emergency_contact_phone = emergency_contact_phone
+            medical_profile.blood_type = blood_type
+            medical_profile.smoking_status = smoking_status
+
+        db.session.add(medical_profile)
+        db.session.commit()
+
+        return redirect(url_for('home'))
+
     return render_template('home.html', medical_profile=medical_profile)
 
 

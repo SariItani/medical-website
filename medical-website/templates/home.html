@@ -28,6 +28,7 @@
                             <div class="mb-3">
                                 <label for="sex" class="form-label">Sex</label>
                                 <select class="form-select" id="sex" name="sex" required>
+                                    <option value="" {% if not medical_profile.sex %}selected{% endif %} disabled>Select Gender</option>
                                     <option value="male" {% if medical_profile.sex == 'male' %}selected{% endif %}>Male</option>
                                     <option value="female" {% if medical_profile.sex == 'female' %}selected{% endif %}>Female</option>
                                 </select>
