@@ -35,8 +35,8 @@ class MedicalProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    dob = db.Column(db.Date)
-    sex = db.Column(db.Text)
+    dob = db.Column(db.Date, nullable=False) # required
+    sex = db.Column(db.Text, nullable=False) # required
 
     # Medical History
     allergies = db.Column(db.Text)
@@ -46,22 +46,21 @@ class MedicalProfile(db.Model):
     surgical_history = db.Column(db.Text)
 
     # Administrative Information
-    emergency_contact_name = db.Column(db.Text)
-    emergency_contact_phone = db.Column(db.Text)
+    emergency_contact_name = db.Column(db.Text, nullable=False) # required
+    emergency_contact_phone = db.Column(db.Text, nullable=False) # required
     insurance_provider = db.Column(db.Text)
-    insurance_id = db.Column(db.Text)
     primary_care_physician_id = db.Column(db.Integer, db.ForeignKey('doctor.id'))
     primary_care_physician = db.relationship('Doctor', backref='patients')
 
 
     # Other relevant fields
-    blood_type = db.Column(db.Text)
-    smoking_status = db.Column(db.Boolean)
+    blood_type = db.Column(db.Text, nullable=False) # required
+    smoking_status = db.Column(db.Boolean, nullable=False)
     family_history = db.Column(db.Text)
 
     user = db.relationship('User', backref=db.backref('medical_profile', uselist=False))
 
-    def __init__(self, dob, sex, allergies, medications, conditions, immunizations, surgical_history, emergency_contact_name, emergency_contact_phone, insurance_provider, insurance_id, primary_care_physician, blood_type, smoking_status, family_history):
+    def __init__(self, blood_type, smoking_status, dob, sex, emergency_contact_name='None', emergency_contact_phone='None', allergies=None, medications=None, conditions=None, immunizations=None, surgical_history=None, insurance_provider=None, primary_care_physician=None, family_history=None):
         self.dob = dob
         self.sex = sex
         self.allergies = allergies
@@ -72,7 +71,6 @@ class MedicalProfile(db.Model):
         self.emergency_contact_name = emergency_contact_name
         self.emergency_contact_phone = emergency_contact_phone
         self.insurance_provider = insurance_provider
-        self.insurance_id = insurance_id
         self.primary_care_physician = primary_care_physician
         self.blood_type = blood_type
         self.smoking_status = smoking_status
