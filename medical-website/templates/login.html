@@ -1,0 +1,18 @@
+{% extends 'sign-up.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block form_post %}
+<form method="post" action="{{ url_for('login') }}">
+{% endblock %}
+
+{% block login_items %}{% endblock %}
+
+{% block login_foot %}
+<div class="container">
+    <a href="/sign-up"><p>Don't Have an account? Sign-Up!</p></a>
+  </div>
+          <button class="w-100 btn btn-lg btn-primary" type="submit">
+              Login
+          </button>
+{% endblock %}

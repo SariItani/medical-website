@@ -1,0 +1,33 @@
+{% extends 'index.html' %} 
+
+{% block title %}Home{% endblock %} 
+
+{% block morecss %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}"/>
+{% endblock %}
+
+{% block content%}
+<section class="masthead text-center" style="background-color: rgb(203, 255, 238)" id="portfolio">
+    <div class="container d-flex align-items-left flex-column">
+        <h1>Here is your reference to all available Lessons</h1>
+		<!-- <p>This is the content of the Dashboard.</p> -->
+        <br>
+        <button id="toggleButton1" class="btn btn-primary" type="button">Press for Chapter 1</button>
+        <br>
+        <div id="file1" class="hidden-file">
+            <embed src="{{ url_for('static', filename='files/ch1.pdf') }}" type="application/pdf" width="100%" height="600px" />
+        </div>
+        <br>
+        <button id="toggleButton2" class="btn btn-primary" type="button">Press for Chapter 2</button>
+        <br>
+        <div id="file2" class="hidden-file">
+            <embed src="{{ url_for('static', filename='files/ch2.pdf') }}" type="application/pdf" width="100%" height="600px" />
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
+{% block morejs %}
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+{%endblock%}

@@ -1,0 +1,260 @@
+{% extends 'index.html' %} 
+
+{% block morecss %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/qst.css') }}"/>
+{% endblock %}
+
+{% block title %}MCQ{% endblock %} 
+
+{% block content%}
+<div class="bg">
+<section class="masthead text-center" id="portfolio">
+    <form method="POST">
+    <div class="container d-flex align-items-left flex-column">
+        
+        <div class="form-group">
+            <div class="mcqcontainer container d-flex align-items-left flex-column">
+              <br>
+              <h1>Answer the following MCQ questions</h1>
+            <!-- Question 1 -->
+            <br>
+            <div class="question">
+                <label for="q1" class="form-label">1) Study the given pedigree chart and choose the correct answer</label>
+                <img class="question-content" src="{{ url_for('static', filename='assets/img/MCQ/1.png') }}">
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q1" id="q1_1" value="The trait understudy is dominant">
+              <label class="form-check-label" for="q1_1">The trait understudy is dominant</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q1" id="q1_2" value="Both parents are homozoygous">
+              <label class="form-check-label" for="q1_2">Both parents are homozoygous</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="q1" id="q1_3" value="The trait can be X-linked recessive haemophilia">
+                <label class="form-check-label" for="q1_3">The trait can be X-linked recessive haemophilia</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q1" id="q1_4" value="The trait understudy is autosomal recessive like cystic fibrosis">
+                <label class="form-check-label" for="q1_4">The trait understudy is autosomal recessive like cystic fibrosis</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q1" id="q1_0" value="None" checked style="visibility: hidden;">
+              </div>
+            <!-- Question 2 -->
+            <br>
+            <div class="question">
+                <label for="q2" class="form-label">2) The trait studied in the pedigree below is:</label>
+                <img class="question-content" src="{{ url_for('static', filename='assets/img/MCQ/2.png') }}">
+              </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q2" id="q2_1" value="Autosomal recessive">
+              <label class="form-check-label" for="q2_1">Autosomal recessive</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q2" id="q2_2" value="Autosomal dominant">
+              <label class="form-check-label" for="q2_2">Autosomal dominant</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="q2" id="q2_3" value="X-linked recessive">
+                <label class="form-check-label" for="q2_3">X-linked recessive </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q2" id="q2_4" value="X-linked dominant">
+                <label class="form-check-label" for="q2_4">X-linked dominant</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q2" id="q2_0" value="None" checked style="visibility: hidden;">
+              </div>
+              <!-- Question 3 -->
+            <br>
+            <div class="question">
+                <label for="q3" class="form-label">3) The trait studied in this pedigree is X-linked recessive. Find the risk of couple 6 and 7 to have an affected child</label>
+                <img class="question-content" src="{{ url_for('static', filename='assets/img/MCQ/3.png') }}">
+              </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q3" id="q3_1" value="The risk of female affected is null">
+              <label class="form-check-label" for="q3_1">The risk of female affected is null</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q3" id="q3_2" value="The risk of a boy affected is ½">
+              <label class="form-check-label" for="q3_2">The risk of a boy affected is ½</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="q3" id="q3_3" value="The probability of the mother to carry Xd is 1/2">
+                <label class="form-check-label" for="q3_3">The probability of the mother to carry Xd is 1/2</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q3" id="q3_4" value="Only 'a' and 'b'">
+                <label class="form-check-label" for="q3_4">Only 'a' and 'b'</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q3" id="q3_5" value="All of the above">
+                <label class="form-check-label" for="q3_5">All of the above</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q3" id="q3_0" value="None" checked style="visibility: hidden;">
+              </div>
+              <!-- Question 4 -->
+            <br>
+            <div class="question">
+                <label for="q4" class="form-label">4) The pedigree below represents the inheritance of a recessive autosomal disease. Find the risk of child 15 to be affected</label>
+                <img class="question-content" src="{{ url_for('static', filename='assets/img/MCQ/4.png') }}">
+              </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q4" id="q4_1" value="The probability of the mother to be heterozygote is ½">
+              <label class="form-check-label" for="q4_1">The probability of the mother to be heterozygote is ½</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q4" id="q4_2" value="The risk is null since both parents are normal">
+              <label class="form-check-label" for="q4_2">The risk is null since both parents are normal</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="q4" id="q4_3" value="The risk of affected child  is  2/3 x 2/3 x ½ x ½">
+                <label class="form-check-label" for="q4_3">The risk of affected child  is  2/3 x 2/3 x ½ x ½ </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q4" id="q4_4" value="The risk of affected child is ¼">
+                <label class="form-check-label" for="q4_4">The risk of affected child is ¼</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q4" id="q4_0" value="None" checked style="visibility: hidden;">
+              </div>
+              <!-- Question 5 -->
+            <br>
+            <div class="question">
+                <label for="q5" class="form-label">5) Phenylketonuria is a recessive autosomal disease that affects 1/10,000 of newborns world wide. This disease is related to a deficiency in an enzyme called PAH. A study performed on 1,200 children selected from an isolated community, showed that 30 children were heterozygous for PAH. Calculate the proportion of heterozygous children in this community</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q5" id="q5_1" value="30/10,000">
+              <label class="form-check-label" for="q5_1">30/10,000</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q5" id="q5_2" value="1200/10,000">
+              <label class="form-check-label" for="q5_2">1200/10,000</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="q5" id="q5_3" value="30/1200">
+                <label class="form-check-label" for="q5_3">30/1200</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q5" id="q5_4" value="1/30">
+                <label class="form-check-label" for="q5_4">1/30</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q5" id="q5_0" value="None" checked style="visibility: hidden;">
+              </div>
+              <!-- Question 6 -->
+            <br>
+            <div class="question">
+                <label for="q6" class="form-label">6) The document below shows the nucleotide sequence of a fragment of the non- transcribed strand of the normal allele (A1) and the allele of the disease (A2) of the PHEX gene. The mutation observed in allele A2 is </label>
+                <img class="question-content" src="{{ url_for('static', filename='assets/img/MCQ/6.png') }}">
+              </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q6" id="q6_1" value="Point mutation by substitution">
+              <label class="form-check-label" for="q6_1">Point mutation by substitution</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q6" id="q6_2" value="Point mutation by insertion">
+              <label class="form-check-label" for="q6_2">Point mutation by insertion</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="q6" id="q6_3" value="Frame-shift mutation by insertion">
+                <label class="form-check-label" for="q6_3">Frame-shift mutation by insertion</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q6" id="q6_4" value="Frame-shift mutation by addition">
+                <label class="form-check-label" for="q6_4">Frame-shift mutation by addition</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q6" id="q6_0" value="None" checked style="visibility: hidden;">
+              </div>
+              <!-- Question 7 -->
+            <br>
+            <div class="question">
+                <label for="q7" class="form-label">7) The document below shows the transmission of Familial hypophosphatemia in a family. The disease is X-Linked dominant. Indicate the genotypes of individuals 13 and 14</label>
+                <img class="question-content" src="{{ url_for('static', filename='assets/img/MCQ/789.png') }}">
+              </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q7" id="q7_1" value="13: XnY    14: XDXD">
+              <label class="form-check-label" for="q7_1">13: XnY    14: XDXD</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q7" id="q7_2" value="13 XnY     14 XDXn">
+              <label class="form-check-label" for="q7_2">13 XnY     14 XDXn</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="q7" id="q7_3" value="13: XnY    14: XDXD or XDXn">
+                <label class="form-check-label" for="q7_3">13: XnY    14: XDXD or XDXn</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q7" id="q7_4" value="13 nn     14: Dn">
+                <label class="form-check-label" for="q7_4">13 nn     14: Dn</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q7" id="q7_0" value="None" checked style="visibility: hidden;">
+              </div>
+              <!-- Question 8 -->
+            <br>
+            <div class="question">
+                <label for="q8" class="form-label">8) The document below shows the transmission of Familial hypophosphatemia in a family. The disease is X-Linked dominant. The risk of individuals 13 and 14 to have affected child is</label>
+                <img class="question-content" src="{{ url_for('static', filename='assets/img/MCQ/789.png') }}">
+              </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q8" id="q8_1" value="Null for females, null boys">
+              <label class="form-check-label" for="q8_1">Null for females, null boys</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q1" id="q1_2" value="Half of the females, null boys">
+              <label class="form-check-label" for="q8_2">Half of the females, null boys</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="q8" id="q8_3" value="Null of the boys, all females are affected">
+                <label class="form-check-label" for="q8_3">Null of the boys, all females are affected</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q8" id="q8_4" value="Half of the boys, all females are affected">
+                <label class="form-check-label" for="q8_4">Half of the boys, all females are affected</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q8" id="q8_5" value="Half of the females, half of boys are affected">
+                <label class="form-check-label" for="q8_5">Half of the females, half of boys are affected</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q8" id="q8_0" value="None" checked style="visibility: hidden;">
+              </div>
+              <!-- Question 9 -->
+            <br>
+            <div class="question">
+                <label for="q9" class="form-label">9) The document below shows the transmission of Familial hypophosphatemia in a family. The disease is X-Linked dominant. Formulate a hypothesis explaining why female 6 is not affected</label>
+                <img class="question-content" src="{{ url_for('static', filename='assets/img/MCQ/789.png') }}">
+              </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q9" id="q9_1" value="Female 6 doesn't belong to the family">
+              <label class="form-check-label" for="q9_1">Female 6 doesn't belong to the family</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="q9" id="q9_2" value="Female 6 has the diseased masked">
+              <label class="form-check-label" for="q9_2">Female 6 has the diseased masked</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="q9" id="q9_3" value="Female 6 has turner syndrome, she possesses only 1 X chromosome carrying normal allele">
+                <label class="form-check-label" for="q9_3">Female 6 has turner syndrome, she possesses only 1 X chromosome carrying normal allele</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q1" id="q1_4" value="Female 6 is a girl, and girls are not affected.">
+                <label class="form-check-label" for="q9_4">Female 6 is a girl, and girls are not affected.</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q9" id="q9_0" value="None" checked style="visibility: hidden;">
+              </div>
+        <button type="submit" class="btn btn-success">Submit</button>
+        <br>
+    </div>
+        </div>
+        <br></br>
+    </div>
+    </form>
+</section>
+</div>
+{% endblock %}

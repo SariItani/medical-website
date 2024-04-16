@@ -1,0 +1,60 @@
+.mcqcontainer {
+    max-width: 800px;
+    background-color:azure;
+    padding-left: 2rem;
+}
+
+.bg {
+    background-image: url("../assets/img/qst.jpg");
+    background-repeat: repeat;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    margin-left: 1rem;
+    font-size: 1.25rem;
+    text-align: left;
+}
+
+.question{
+    display: flex;
+    flex-direction: column; /* Change to column layout */
+    align-items: flex-start; /* Align items to the start */
+    font-weight: bold;
+    margin-left: 0rem;
+    margin-bottom: 1rem;
+}
+
+.question-identifier {
+    font-size: 1.25rem;
+}
+
+.form-check-input {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.btn {
+    font-size: 1.25rem;
+    padding: 0.5rem 2rem;
+    border-radius: 0.5rem;
+}
+
+.form-check-label {
+    margin-left: 1rem;
+    text-align: left;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+}
+
+.question-content {
+    margin-top: 0.5rem; /* Add some space between label and image */
+    height: auto;
+    width: auto;
+}

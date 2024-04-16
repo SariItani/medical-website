@@ -1,0 +1,28 @@
+/* Custom CSS for profile update form */
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.col-form-label {
+    font-size: 18px;
+    font-weight: bold;
+    font-style: italic;
+}
+
+textarea,
+input[type="text"],
+input[type="file"] {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+}
+
+.btn-primary {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.bg {
+    background-color: bisque;
+}

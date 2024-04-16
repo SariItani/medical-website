@@ -1,0 +1,73 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}
+
+.bg-image {
+  position: fixed;
+  top: -5px;
+  left: -5px;
+  width: 101%;
+  height: 101%;
+  z-index: -1;
+  background-image: url("../assets/img/bg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(2px);
+}
+
+.form-signin {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  margin: auto;
+}
+
+.form-signin .checkbox {
+  font-weight: 400;
+}
+
+.form-signin .form-floating:focus-within {
+  z-index: 2;
+}
+
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.flashes {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.flashes li {
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 1.33rem;
+  border: 1px solid #eb992e;
+  background-color: #f9f9f9;
+}
+
+.image-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem; /* Adjust as needed */
+}
