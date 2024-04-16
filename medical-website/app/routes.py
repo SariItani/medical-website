@@ -19,6 +19,9 @@ bcrypt = Bcrypt(app)
 load_dotenv()
 
 API_KEY = os.getenv('API_KEY')
+TWILIO_API=os.getenv('TWILIO_API')
+TWILIO_ID=os.getenv('TWILIO_ID')
+TWILIO_PHONE = '+447883319816'
 
 
 def run_conversation(prompt):

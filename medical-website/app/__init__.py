@@ -60,6 +60,23 @@ class MedicalProfile(db.Model):
     family_history = db.Column(db.Text)
 
     user = db.relationship('User', backref=db.backref('medical_profile', uselist=False))
+    
+    def __init__(self, dob, sex, allergies, medications, conditions, immunizations, surgical_history, emergency_contact_name, emergency_contact_phone, insurance_provider, insurance_id, primary_care_physician, blood_type, smoking_status, family_history):
+        self.dob = dob
+        self.sex = sex
+        self.allergies = allergies
+        self.medications = medications
+        self.conditions = conditions
+        self.immunizations = immunizations
+        self.surgical_history = surgical_history
+        self.emergency_contact_name = emergency_contact_name
+        self.emergency_contact_phone = emergency_contact_phone
+        self.insurance_provider = insurance_provider
+        self.insurance_id = insurance_id
+        self.primary_care_physician = primary_care_physician
+        self.blood_type = blood_type
+        self.smoking_status = smoking_status
+        self.family_history = family_history
         
 
 class Doctor(UserMixin, db.Model):
