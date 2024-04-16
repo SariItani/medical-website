@@ -1,0 +1,7 @@
+Patient-to-Professional Interaction (chat)
+Symptom Dnalysis, Diagnosis (using DT AI model and variable number of drop downs)
+Medical Profiling for Patients (an existing User can enter his medical data)
+Assistant Chatbot (Integration with OpenAI API)
+(Integration with Twilio API)
+Basic Informatics Dashboard (like a homepage that will show the user information he requires based on his selections)
+Doctor's Portal for the same functionalities but from a docto's perspectives to enable the interactions
