@@ -7,6 +7,7 @@ from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.tree import DecisionTreeClassifier
+from joblib import dump
 
 # Read the data
 train = pd.read_csv('../data/Training.csv')
@@ -15,14 +16,16 @@ test = pd.read_csv('../data/Testing.csv')
 # Drop the unwanted column
 train = train.drop(["Unnamed: 133"], axis=1)
 
+labels = ["blister","red_sore_around_nose","yellow_crust_ooze","prognosis"]
+
 # Encode the target labels
 label_encoder = LabelEncoder()
-P_train = label_encoder.fit_transform(train["prognosis"])
-P_test = label_encoder.transform(test["prognosis"])
+P_train = label_encoder.fit_transform(train[labels])
+P_test = label_encoder.transform(test[labels])
 
 # Separate features and target variables
-X_train = train.drop(["prognosis"], axis=1)
-X_test = test.drop(["prognosis"], axis=1)
+X_train = train.drop([labels], axis=1)
+X_test = test.drop([labels], axis=1)
 
 # Split the data into training and validation sets
 xtrain, xval, ytrain, yval = train_test_split(X_train, P_train, test_size=0.45, random_state=42)
