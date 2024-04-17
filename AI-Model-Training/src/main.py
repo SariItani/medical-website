@@ -74,3 +74,5 @@ test["predicted"] = label_encoder.inverse_transform(test_predictions)
 
 # Display the test data with predictions
 print(test[["prognosis", "predicted"]])
+
+# dump('../models/svm.pkl')
