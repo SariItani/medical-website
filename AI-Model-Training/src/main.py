@@ -20,12 +20,12 @@ labels = ["blister","red_sore_around_nose","yellow_crust_ooze","prognosis"]
 
 # Encode the target labels
 label_encoder = LabelEncoder()
-P_train = label_encoder.fit_transform(train[labels])
-P_test = label_encoder.transform(test[labels])
+P_train = label_encoder.fit_transform(train["blister"])
+P_test = label_encoder.transform(test["blister"])
 
 # Separate features and target variables
-X_train = train.drop([labels], axis=1)
-X_test = test.drop([labels], axis=1)
+X_train = train.drop(["blister"], axis=1)
+X_test = test.drop(["blister"], axis=1)
 
 # Split the data into training and validation sets
 xtrain, xval, ytrain, yval = train_test_split(X_train, P_train, test_size=0.45, random_state=42)
