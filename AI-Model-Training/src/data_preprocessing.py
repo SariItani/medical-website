@@ -1,6 +1,5 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -9,89 +8,66 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.tree import DecisionTreeClassifier
 
-data = pd.read_csv('../data/dataset.csv')
+# Read the data
+train = pd.read_csv('../data/Training.csv')
+test = pd.read_csv('../data/Testing.csv')
 
-X = data['symptoms']
-y = data['disease']
+# Drop the unwanted column
+train = train.drop(["Unnamed: 133"], axis=1)
 
-print(data.head())
-print(data.describe())
-print(data.dtypes)
-print(data.isnull().sum())
+# Encode the target labels
+label_encoder = LabelEncoder()
+P_train = label_encoder.fit_transform(train["prognosis"])
+P_test = label_encoder.transform(test["prognosis"])
 
-disease_counts = y.value_counts()
-plt.figure(figsize=(10, 6))
-disease_counts.plot(kind='bar')
-plt.title('Count of Unique Diseases')
-plt.xlabel('Disease')
-plt.ylabel('Count')
-plt.savefig('../results/Count of Unique Diseases.png')
+# Separate features and target variables
+X_train = train.drop(["prognosis"], axis=1)
+X_test = test.drop(["prognosis"], axis=1)
 
-symptom_counts = X.value_counts()
-plt.figure(figsize=(12, 6))
-symptom_counts[:20].plot(kind='bar')
-plt.title('Count of Unique Symptoms (Top 20)')
-plt.xlabel('Symptom')
-plt.ylabel('Count')
-plt.xticks(rotation=45)
-plt.savefig('../results/Count of Unique Symptoms (Top 20).png')
+# Split the data into training and validation sets
+xtrain, xval, ytrain, yval = train_test_split(X_train, P_train, test_size=0.45, random_state=42)
 
-encoder = OneHotEncoder()
-X = encoder.fit_transform(X.to_frame()).toarray()
-y = encoder.fit_transform(y.to_frame()).toarray()
+# Scale the features
+scaler = StandardScaler()
+scaler.fit(xtrain)
+xtrain_scaled = scaler.transform(xtrain)
+xval_scaled = scaler.transform(xval)
+X_test_scaled = scaler.transform(X_test)
 
-# label_encoder = LabelEncoder()
-# y = label_encoder.fit_transform(y)
+# Initialize models
+rf = RandomForestClassifier(random_state=42)
+dt = DecisionTreeClassifier()
+lr = LogisticRegression()
+svm = SVC()
+gb = GaussianNB()
 
-print(pd.DataFrame(X).head())
-print(pd.DataFrame(X).describe())
-print(pd.DataFrame(X).dtypes)
-
-print(pd.DataFrame(y).head())
-print(pd.DataFrame(y).describe())
-print(pd.DataFrame(y).dtypes)
-
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Decision Tree Classifier
-dt_model = DecisionTreeClassifier()
-dt_model.fit(X_train, y_train)
-y_pred_dt = dt_model.predict(X_test)
-
-# Random Forest Classifier
-rf_model = RandomForestClassifier()
-rf_model.fit(X_train, y_train)
-y_pred_rf = rf_model.predict(X_test)
-
-# Logistic Regression
-lr_model = LogisticRegression()
-lr_model.fit(X_train, y_train)
-y_pred_lr = lr_model.predict(X_test)
-
-# Support Vector Machine (SVM)
-svm_model = SVC()
-svm_model.fit(X_train, y_train)
-y_pred_svm = svm_model.predict(X_test)
-
-# Naive Bayes
-nb_model = GaussianNB()
-nb_model.fit(X_train, y_train)
-y_pred_nb = nb_model.predict(X_test)
-
-# Evaluate accuracy, precision, recall, and f1-score for each model
-models = ['Decision Tree', 'Random Forest', 'Logistic Regression', 'SVM', 'Naive Bayes']
-y_preds = [y_pred_dt, y_pred_rf, y_pred_lr, y_pred_svm, y_pred_nb]
-
-for model, y_pred in zip(models, y_preds):
-    accuracy = accuracy_score(y_test, y_pred)
-    precision = precision_score(y_test, y_pred, average='weighted')
-    recall = recall_score(y_test, y_pred, average='weighted')
-    f1 = f1_score(y_test, y_pred, average='weighted')
+# Fit models
+models = {'Random Forest': rf, 'Decision Tree': dt, 'Logistic Regression': lr, 'Support Vector Machine': svm, 'Gaussian Naive Bayes': gb}
+for name, model in models.items():
+    model.fit(xtrain_scaled, ytrain)
+    tr_pred = model.predict(xtrain_scaled)
+    ts_pred = model.predict(xval_scaled)
+    tt_pred = model.predict(X_test_scaled)
     
-    print(f"--- {model} ---")
-    print(f"Accuracy: {accuracy:.4f}")
-    print(f"Precision: {precision:.4f}")
-    print(f"Recall: {recall:.4f}")
-    print(f"F1 Score: {f1:.4f}")
+    print("================= FOR", name, "=================")
+    print("Training accuracy:", accuracy_score(ytrain, tr_pred))
+    print("Validation accuracy:", accuracy_score(yval, ts_pred))
+    print("Testing accuracy:", accuracy_score(P_test, tt_pred))
+    print("Training precision:", precision_score(ytrain, tr_pred, average='weighted'))
+    print("Validation precision:", precision_score(yval, ts_pred, average='weighted'))
+    print("Testing precision:", precision_score(P_test, tt_pred, average='weighted'))
+    print("Training recall:", recall_score(ytrain, tr_pred, average='weighted'))
+    print("Validation recall:", recall_score(yval, ts_pred, average='weighted'))
+    print("Testing recall:", recall_score(P_test, tt_pred, average='weighted'))
+    print("Training F1-score:", f1_score(ytrain, tr_pred, average='weighted'))
+    print("Validation F1-score:", f1_score(yval, ts_pred, average='weighted'))
+    print("Testing F1-score:", f1_score(P_test, tt_pred, average='weighted'))
     print()
+
+# Predict using the best model (you can choose based on the evaluation metrics)
+best_model = rf  # Change this to the best model based on your evaluation
+test_predictions = best_model.predict(X_test_scaled)
+test["predicted"] = label_encoder.inverse_transform(test_predictions)
+
+# Display the test data with predictions
+print(test[["prognosis", "predicted"]])
