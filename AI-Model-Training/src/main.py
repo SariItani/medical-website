@@ -11,7 +11,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
 from sklearn.tree import DecisionTreeClassifier
 from joblib import dump
-
+ 
 # Read the data
 train = pd.read_csv('../data/Training.csv')
 test = pd.read_csv('../data/Testing.csv')
@@ -30,6 +30,13 @@ X_test = test.drop(["prognosis"], axis=1)
 
 # Split the data into training and validation sets
 xtrain, xval, ytrain, yval = train_test_split(X_train, P_train, test_size=0.45, random_state=42)
+
+plt.figure(figsize=(10, 6))
+sns.countplot(x='itching', data=train)
+plt.title('Count Plot of Itching Column')
+plt.xlabel('Itching')
+plt.ylabel('Count')
+plt.savefig("../results/itchingcountplot.png")
 
 # Scale the features
 scaler = StandardScaler()
