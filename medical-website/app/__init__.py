@@ -29,7 +29,7 @@ class User(UserMixin, db.Model):
         self.password = password
         self.imgpath = imgpath
         self.bio = bio
-        
+
 
 class MedicalProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -76,7 +76,7 @@ class MedicalProfile(db.Model):
         self.smoking_status = smoking_status
         self.family_history = family_history
         self.user = user
-        
+
 
 class Doctor(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -87,7 +87,7 @@ class Doctor(UserMixin, db.Model):
     bio = db.Column(db.Text)
     lisence = db.Column(db.String(255))
     profession = db.Column(db.String(50))
-    
+
     def __init__(self, username, email, password, imgpath=None, bio=None, lisence=None, profession=None):
         self.username = username
         self.email = email

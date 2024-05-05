@@ -37,16 +37,18 @@ def predict_symptoms_with_probabilities_and_models(symptoms_vector):
     return probabilities, predictions
 
 
-# selected_symptoms = # get them from the frontend
-# print("\nSelected symptoms:", selected_symptoms)
-# encoded_vector = np.array(encode_symptoms(selected_symptoms, all_symptoms))
-# print("Encoded vector:", encoded_vector)
-# probabilities, predictions = predict_symptoms_with_probabilities_and_models(encoded_vector)
-# print("Predictions by each model:")
-# for model_name, prediction in predictions.items():
-#     print(f"{model_name}: {prediction[0]}")
-# print("Percentage chances of each unique prediction:")
-# returnings = []
-# for prediction, percentage in probabilities.items():
-#     returnings.append(f"Prediction: {prediction}, Percentage: {percentage:.2f}%")
-#     print(f"Prediction: {prediction}, Percentage: {percentage:.2f}%")
+def test():
+    selected_symptoms = ['knee_pain', 'history_of_alcohol_consumption', 'dehydration', 'vomiting', 'movement_stiffness', 'diarrhoea']
+    print("\nSelected symptoms:", selected_symptoms)
+    encoded_vector = np.array(encode_symptoms(selected_symptoms))
+    print("Encoded vector:", encoded_vector)
+    probabilities, predictions = predict_symptoms_with_probabilities_and_models(encoded_vector)
+    print("Predictions by each model:")
+    for model_name, prediction in predictions.items():
+        print(f"{model_name}: {prediction[0]}")
+    print("Percentage chances of each unique prediction:")
+    returnings = []
+    for prediction, percentage in probabilities.items():
+        returnings.append(f"Prediction: {prediction}, Percentage: {percentage:.2f}%")
+        print(f"Prediction: {prediction}, Percentage: {percentage:.2f}%")
+test()

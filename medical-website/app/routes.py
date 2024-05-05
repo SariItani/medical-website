@@ -9,20 +9,86 @@ from app import app, login_manager, User, db, Message, Doctor, MedicalProfile
 from datetime import datetime
 from openai import OpenAI
 import os
-from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 
 
 bcrypt = Bcrypt(app)
 
 
-load_dotenv()
 
 API_KEY = os.getenv('API_KEY')
 
 TWILIO_API=os.getenv('TWILIO_API')
 TWILIO_ID=os.getenv('TWILIO_ID')
 TWILIO_PHONE = '+447883319816'
+
+from collections import Counter
+import random
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from joblib import load
+import traceback
+
+# Initialize empty models dictionary
+models = {}
+
+# Define model names
+model_names = ['Random Forest', 'Decision Tree', 'Logistic Regression', 'Support Vector Machine', 'Gaussian Naive Bayes']
+
+# Load models with error handling
+for model_name in model_names:
+    try:
+        model_path = f"models/{model_name}.joblib"
+        print(f"Loading {model_name} from {model_path}")
+        models[model_name] = load(model_path)
+    except Exception as e:
+        print(f"Error loading {model_name}: {str(e)}")
+        traceback.print_exc()
+
+all_symptoms = pd.read_csv('data/Training.csv').columns[:-2].tolist()
+
+label_encoder = load('models/label_encoder.joblib')
+
+def predict_symptoms(symptoms_vector):
+    scaler = load('models/scaler.joblib')
+    symptoms_vector_scaled = scaler.transform(symptoms_vector.reshape(1, -1))
+    predictions = {}
+    for model_name, model in models.items():
+        prediction = model.predict(symptoms_vector_scaled)
+        predictions[model_name] = label_encoder.inverse_transform(prediction)
+    return predictions
+
+def encode_symptoms(symptoms):
+    encoded_vector = [1 if symptom in symptoms else 0 for symptom in all_symptoms]
+    return encoded_vector
+
+def predict_symptoms_with_probabilities_and_models(symptoms_vector):
+    predictions = predict_symptoms(symptoms_vector)
+    prediction_counts = Counter()
+    for model_name, prediction in predictions.items():
+        prediction_counts[prediction[0]] += 1
+    total_predictions = sum(prediction_counts.values())
+    probabilities = {prediction: count / total_predictions * 100 for prediction, count in prediction_counts.items()}
+    return probabilities, predictions
+
+
+def test(selected_symptoms = ['knee_pain', 'history_of_alcohol_consumption', 'dehydration', 'vomiting', 'movement_stiffness', 'diarrhoea']):
+    # selected_symptoms = ['knee_pain', 'history_of_alcohol_consumption', 'dehydration', 'vomiting', 'movement_stiffness', 'diarrhoea']
+    print("\nSelected symptoms:", selected_symptoms)
+    encoded_vector = np.array(encode_symptoms(selected_symptoms))
+    print("Encoded vector:", encoded_vector)
+    probabilities, predictions = predict_symptoms_with_probabilities_and_models(encoded_vector)
+    print("Predictions by each model:")
+    for model_name, prediction in predictions.items():
+        print(f"{model_name}: {prediction[0]}")
+    print("Percentage chances of each unique prediction:")
+    returnings = [f"Selected Symptoms: {selected_symptoms}"]
+    for prediction, percentage in probabilities.items():
+        returnings.append(f"{prediction}: {percentage:.2f}%")
+        print(f"Prediction: {prediction}, Percentage: {percentage:.2f}%")
+    return returnings
+test()
 
 
 def run_conversation(prompt):
@@ -151,11 +217,12 @@ def qst():
     if request.method == 'POST':
         symptoms = request.form.getlist('symptoms[]')
         print(symptoms)
-        return redirect(url_for('qst'))
+        diagnosis = test(symptoms)
+        return render_template('qst.html', diagnosis=diagnosis)
     return render_template('qst.html')
 
 
-UPLOAD_FOLDER = 'app/static/assets/img/profilepics'
+UPLOAD_FOLDER = 'medical-website/app/static/assets/img/profilepics'
 ALLOWED_EXTENSIONS = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'tiff', 'tif', 'svg', 'webp']
 
 def allowed_file(filename):
@@ -232,10 +299,14 @@ def signup():
         email = request.form['email']
         password = request.form['password']
 
+        print(f"I am the server, i got: [{username}, {email}, {password}]")
+
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
         existing_user_username = User.query.filter_by(username=username).first()
         existing_user_email = User.query.filter_by(email=email).first()
+
+        print(f"I am the server, im trying to create this user: [existing_user_username = {existing_user_username}, hashed_password = {hashed_password}]")
 
         if existing_user_username:
             flash('Username is already taken. Please choose a different one.', 'danger')
@@ -246,6 +317,8 @@ def signup():
             user = User(username=username, email=email, password=hashed_password, imgpath="assets/img/avataaars.svg", bio="Enter bio in the Profile Section...")
             db.session.add(user)
             db.session.commit()
+
+            print(f"Username: {username}, HashedPassword: {hashed_password}, Password: {password}, email: {email}")
 
             flash('Your account has been created! You can now log in.', 'success')
             return redirect(url_for('login'))
