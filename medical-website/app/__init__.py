@@ -85,10 +85,11 @@ class Doctor(UserMixin, db.Model):
     password = db.Column(db.String(128), nullable=False)
     imgpath = db.Column(db.String(255))
     bio = db.Column(db.Text)
-    lisence = db.Column(db.String(255))
+    lisence = db.Column(db.String(255)) # honorable mention security stuff
     profession = db.Column(db.String(50))
+    last_user = db.Column(db.Integer)
 
-    def __init__(self, username, email, password, imgpath=None, bio=None, lisence=None, profession=None):
+    def __init__(self, username, email, password, imgpath=None, bio=None, lisence=None, profession=None, last_user=None):
         self.username = username
         self.email = email
         self.password = password
@@ -96,7 +97,8 @@ class Doctor(UserMixin, db.Model):
         self.bio = bio
         self.lisence = lisence
         self.profession = profession
-
+        self.last_user = last_user
+        
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)

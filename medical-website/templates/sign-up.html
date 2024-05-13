@@ -109,6 +109,17 @@
 				</div>
 				{% endblock %}
 				<div class="form-floating">
+					<select 
+					class="form-select" 
+					id="type"
+					name="type"
+					required>
+						<option value="Patient">Patient</option>
+						<option value="Doctor">Doctor</option>
+					</select>
+					<label for="type">Select</label>
+				</div>
+				<div class="form-floating">
 					<input
 						type="password"
 						class="form-control"
