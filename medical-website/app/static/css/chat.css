@@ -70,7 +70,21 @@ button {
     white-space: pre-line'
 }
 
-.user-message p, .server-message p {
+.dr-message {
+    background-color: #a87a45;
+    color: #ffffff;
+    margin: 2px 0;
+    padding: 10px;
+    border-radius: 20px;
+    max-width: fit-content;
+    max-height: fit-content;
+    word-wrap: normal;
+    word-break: break-all;
+    text-align: left;
+    white-space: pre-line'
+}
+
+.user-message p, .server-message p, .dr-message p {
     margin: 0;
     font-family: 'Arial', sans-serif;
     font-size: 14px;

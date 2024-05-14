@@ -1,0 +1,14 @@
+{% extends 'index-drs.html' %} 
+
+{% block title %}Home{% endblock %} 
+
+{% block content%}
+<section class="masthead text-center" style="background-color: rgb(184, 155, 211);" id="portfolio">
+    <div class="container d-flex align-items-center flex-column">
+        <h1 style="color: rgb(255, 255, 255);">Solve the following Exam</h1>
+        <br></br>
+		<!-- <p>This is the content of the MCQ.</p> -->
+        <embed src="{{ url_for('static', filename='files/MCQ.pdf') }}" type="application/pdf" width="100%" height="600px" />
+    </div>
+</section>
+{% endblock %}

@@ -1,4 +1,4 @@
-{% extends 'index.html' %} 
+{% extends 'index-drs.html' %} 
 
 {% block title %}Download Licence{% endblock %} 
 
@@ -9,14 +9,14 @@
 {% block content %}
 <section class="masthead text-center" style="background-color: rgb(203, 255, 238)" id="portfolio">
     <div class="container d-flex align-items-left flex-column">
-        <h1>Setup your Medical Identity Here</h1>
+        <h1>Check out the License Here!</h1>
 
         <div class="row justify-content-center">
             <div class="col-md-10 mt-2">
                 <div class="card">
                     <div class="card-body">
-                        <h3 class="card-title mb-3"><b>Licence</b></h3>
-                        <embed src="{{ url_for('static', filename=path]) }}" width="500" height="375" 
+                        <h3 class="card-title mb-3"><b>License</b></h3>
+                        <embed src="{{ url_for('static', filename=path) }}" width="500" height="375" 
  type="application/pdf">
                     </div>
                 </div>

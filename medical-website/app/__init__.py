@@ -103,15 +103,17 @@ class Doctor(UserMixin, db.Model):
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(500), nullable=False)
-    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    sender = db.relationship('User', backref=db.backref('messages', lazy=True))
-    message_type = db.Column(db.String(10), nullable=False)
+    sender_id = db.Column(db.Integer, nullable=False)
+    sender_type = db.Column(db.String(10), nullable=False)  # 'user' or 'doctor'
+    recipient_id = db.Column(db.Integer, nullable=False)
+    recipient_type = db.Column(db.String(10), nullable=False)  # 'user' or 'doctor'
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
-    def __init__(self, content, sender, message_type):
+    def __init__(self, content, sender_id, sender_type, recipient_id, recipient_type):
         self.content = content
-        self.sender = sender
-        self.message_type = message_type
-
+        self.sender_id = sender_id
+        self.sender_type = sender_type
+        self.recipient_id = recipient_id
+        self.recipient_type = recipient_type
 
 from app import routes

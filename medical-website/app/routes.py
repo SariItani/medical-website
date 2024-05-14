@@ -88,7 +88,7 @@ def test(selected_symptoms = ['knee_pain', 'history_of_alcohol_consumption', 'de
         returnings.append(f"{prediction}: {percentage:.2f}%")
         print(f"Prediction: {prediction}, Percentage: {percentage:.2f}%")
     return returnings
-test()
+# test()
 
 
 def run_conversation(prompt):
@@ -170,7 +170,7 @@ def chat():
         if message.message_type == 'user':
             print("User:", message.content)
         else:
-            print("chatgpt:", message.content)
+            print("Other:", message.content)
         message.content = message.content.replace('\\n', '<br>')
     if not chat_history:
         message = Message(content="Hello, I will be your biology assistant. Ask me anything to begin!", sender=user, message_type='server')
@@ -198,11 +198,41 @@ def submit_message():
 
     return redirect(url_for('chat'))
 
+@app.route('/chat-message', methods=['POST'])
+@login_required
+def chat_message():
+    message_content = request.form['message']
+    recipient_username = request.form['recipient_username']
+    recipient_type = request.form['recipient_type']
 
-@app.route('/mcq')
+    recipient = User.query.filter_by(username=recipient_username).first() if recipient_type == 'user' else Doctor.query.filter_by(username=recipient_username).first()
+
+    if recipient:
+        new_message = Message(
+            content=message_content,
+            sender_id=current_user.id,
+            sender_type='doctor' if isinstance(current_user, Doctor) else 'user',
+            recipient_id=recipient.id,
+            recipient_type=recipient_type
+        )
+        db.session.add(new_message)
+        db.session.commit()
+        flash('Message sent successfully!', 'success')
+    else:
+        flash('Recipient not found!', 'error')
+
+    return redirect(url_for('chat'))
+
+
+@app.route('/mcq', methods=['GET'])
 @login_required
 def mcq():
-    return render_template('mcq.html')
+    chat_history = Message.query.filter(
+        (Message.sender_id == current_user.id) & (Message.sender_type == 'doctor' if isinstance(current_user, Doctor) else 'user') |
+        (Message.recipient_id == current_user.id) & (Message.recipient_type == 'doctor' if isinstance(current_user, Doctor) else 'user')
+    ).order_by(Message.timestamp.desc()).all()
+
+    return render_template('mcq.html', chat_history=chat_history)
 
 
 @app.route('/qst', methods=['POST', 'GET'])
@@ -216,7 +246,7 @@ def qst():
     return render_template('qst.html')
 
 
-UPLOAD_FOLDER = 'medical-website/app/static/assets/img/profilepics'
+UPLOAD_FOLDER = 'app/static/assets/img/profilepics'
 ALLOWED_EXTENSIONS = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'tiff', 'tif', 'svg', 'webp']
 
 def allowed_file(filename):
@@ -364,7 +394,7 @@ def signup():
 # DR STUFF
 
 
-LISENSE_UPLOAD_FOLDER = 'medical-website/app/static/licenses'
+LISENSE_UPLOAD_FOLDER = 'app/static/licenses'
 # medical-website/app/static/licenses/
 LISENSE_ALLOWED_EXTENSIONS = ['odt', 'doc', 'docx', 'pdf', 'jpeg', 'jpg', 'png', 'gif', 'bmp', 'tiff', 'tif', 'svg', 'webp']
 
@@ -393,8 +423,8 @@ def dr_qst():
         symptoms = request.form.getlist('symptoms[]')
         print(symptoms)
         diagnosis = test(symptoms)
-        return render_template('qst.html', diagnosis=diagnosis)
-    return render_template('qst.html')
+        return render_template('qst-dr.html', diagnosis=diagnosis)
+    return render_template('qst-dr.html')
 
 
 @app.route('/dr/home', methods=['GET'])
@@ -402,13 +432,15 @@ def dr_qst():
 def dr_home():
     user = current_user
     license = user.lisence # it is a path to a pdf that i will embed in the html
-    path = 'licenses/' + license
-    return render_template('home-dr.html', path=path)
+    # path = 'licenses/' + license
+    print(license)
+    return render_template('home-dr.html', path=license)
 
 
 @app.route('/dr/profile', methods=['GET', 'POST'])
 @login_required
 def dr_profile():
+    print(current_user)
     imgpath = current_user.imgpath
     if request.method == 'POST':
         username = request.form.get('username').strip()
@@ -433,13 +465,18 @@ def dr_profile():
         # Handle license file upload
         if 'pdf_file' in request.files:
             file = request.files['pdf_file']
+            print(file)
+            print(file and allowed_file_license(file.filename))
             if file and allowed_file_license(file.filename):
                 extension = file.filename.rsplit('.', 1)[1].lower()
+                print(extension)
                 filename = generate_filename_license(username, extension)
                 license_path = os.path.join(LISENSE_UPLOAD_FOLDER, filename)
+                print(license_path)
                 os.makedirs(os.path.dirname(license_path), exist_ok=True)  # Ensure directory exists
                 file.save(license_path)
                 license = f'licenses/{filename}'
+                print(license)
                 if current_user.lisence and current_user.lisence != license:
                     old_pdf_path = os.path.join(LISENSE_UPLOAD_FOLDER, current_user.lisence.split('/')[-1])
                     if os.path.exists(old_pdf_path):
@@ -454,8 +491,24 @@ def dr_profile():
             current_user.profession = profession
         if imgpath and imgpath != current_user.imgpath:
             current_user.imgpath = imgpath
+        if license and license != current_user.lisence:
+            current_user.lisence = license
 
         db.session.commit()
         return redirect(url_for('dr_profile'))
 
     return render_template('profile-dr.html', imgpath=imgpath)
+
+
+@app.route('/dr/mcq')
+@login_required
+def dr_mcq():
+    user = current_user
+    chat_history = Message.query.filter_by(sender=user).all()
+    for message in chat_history:
+        if message.message_type == 'user':
+            print("User:", message.content)
+        else:
+            print("Other:", message.content)
+        message.content = message.content.replace('\\n', '<br>')
+    return render_template('chat-dr.html', chat_history=chat_history)
