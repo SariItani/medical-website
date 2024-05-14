@@ -10,6 +10,7 @@ from datetime import datetime
 from openai import OpenAI
 import os
 from werkzeug.utils import secure_filename
+from sqlalchemy import case
 
 
 bcrypt = Bcrypt(app)
@@ -165,35 +166,63 @@ def home():
 @login_required
 def chat():
     user = current_user
-    chat_history = Message.query.filter_by(sender=user).all()
-    for message in chat_history:
-        if message.message_type == 'user':
-            print("User:", message.content)
-        else:
-            print("Other:", message.content)
-        message.content = message.content.replace('\\n', '<br>')
-    if not chat_history:
-        message = Message(content="Hello, I will be your biology assistant. Ask me anything to begin!", sender=user, message_type='server')
-        db.session.add(message)
-        db.session.commit()
-        chat_history = [message]
-    return render_template('chat.html', chat_history=chat_history)
+    # Assuming system messages use sender_id or recipient_id as 0 to represent the server/system
+    chat_history = Message.query.filter(
+        ((Message.sender_id == user.id) & (Message.recipient_id == 0)) | 
+        ((Message.recipient_id == user.id) & (Message.sender_id == 0))
+    ).order_by(Message.timestamp.desc()).all()
 
+    for message in chat_history:
+        # Replace new lines with HTML line breaks for display in HTML
+        message.content = message.content.replace('\\n', '<br>')
+
+    # If no chat history exists, create an initial system message
+    if not chat_history:
+        system_message = Message(
+            content="Hello, I will chat with you about your diagnosis or until you contact a dr. Ask me anything to begin!",
+            sender_id=0,  # System as the sender
+            sender_type='system',
+            recipient_id=user.id,
+            recipient_type='user'  # Assuming 'user' type for simplicity
+        )
+        db.session.add(system_message)
+        db.session.commit()
+        chat_history = [system_message]
+
+    print(chat_history)
+    chat_history = reversed(chat_history)
+    return render_template('chat.html', chat_history=chat_history)
 
 @app.route('/submit-message', methods=['POST'])
 @login_required
 def submit_message():
     message_content = request.form['message']
-
     user = current_user
-    message = Message(content=message_content, sender=user, message_type='user')
-    db.session.add(message)
+
+    # Assuming '0' for the server/system's ID and that system/server messages are managed as 'system'
+    # Creating a message from the user to the system
+    user_message = Message(
+        content=message_content,
+        sender_id=user.id,
+        sender_type='user',  # Assuming the current user is a regular user; adjust if it can be a 'doctor'
+        recipient_id=0,  # Server ID
+        recipient_type='system'
+    )
+    db.session.add(user_message)
     db.session.commit()
 
+    # Getting a response from the system (simulate conversation)
     response = run_conversation(prompt=message_content)
 
-    message = Message(content=response, sender=user, message_type='server')
-    db.session.add(message)
+    # Creating a system response message to the user
+    system_response = Message(
+        content=response,
+        sender_id=0,  # Server as the sender
+        sender_type='system',
+        recipient_id=user.id,
+        recipient_type='user'  # Assuming the recipient is a regular user; adjust if it can be a 'doctor'
+    )
+    db.session.add(system_response)
     db.session.commit()
 
     return redirect(url_for('chat'))
@@ -201,38 +230,57 @@ def submit_message():
 @app.route('/chat-message', methods=['POST'])
 @login_required
 def chat_message():
-    message_content = request.form['message']
-    recipient_username = request.form['recipient_username']
-    recipient_type = request.form['recipient_type']
+    message_content = request.form.get('message')
+    recipient_username = request.form.get('drname')
+    
+    print(recipient_username)
 
-    recipient = User.query.filter_by(username=recipient_username).first() if recipient_type == 'user' else Doctor.query.filter_by(username=recipient_username).first()
+    recipient = Doctor.query.filter_by(username=recipient_username).first()
 
-    if recipient:
+    if not recipient:
+        flash('Doctor not found!', 'error')
+        return render_template('mcq.html', chat_history=[], drname=recipient_username)
+
+    if message_content != "":
         new_message = Message(
             content=message_content,
             sender_id=current_user.id,
             sender_type='doctor' if isinstance(current_user, Doctor) else 'user',
             recipient_id=recipient.id,
-            recipient_type=recipient_type
+            recipient_type='doctor'
         )
         db.session.add(new_message)
         db.session.commit()
-        flash('Message sent successfully!', 'success')
-    else:
-        flash('Recipient not found!', 'error')
 
-    return redirect(url_for('chat'))
+    chat_history = Message.query.filter(
+        db.or_(
+            db.and_(Message.sender_id == current_user.id, Message.recipient_id == recipient.id),
+            db.and_(Message.recipient_id == current_user.id, Message.sender_id == recipient.id)
+        )
+    ).order_by(Message.timestamp.desc()).all()
+
+    return render_template('mcq.html', chat_history=reversed(chat_history), drname=recipient_username)
 
 
 @app.route('/mcq', methods=['GET'])
 @login_required
 def mcq():
+    drname = request.args.get('drname', '')  # Get the doctor's name from query parameters
+    doctor = Doctor.query.filter_by(username=drname).first()
+
+    if not doctor:
+        flash('Doctor not found!', 'error')
+        return render_template('mcq.html', chat_history=[], drname=drname)
+
+    # Filter messages by current user and the selected doctor
     chat_history = Message.query.filter(
-        (Message.sender_id == current_user.id) & (Message.sender_type == 'doctor' if isinstance(current_user, Doctor) else 'user') |
-        (Message.recipient_id == current_user.id) & (Message.recipient_type == 'doctor' if isinstance(current_user, Doctor) else 'user')
+        db.or_(
+            db.and_(Message.sender_id == current_user.id, Message.recipient_id == doctor.id, Message.recipient_type == 'doctor'),
+            db.and_(Message.recipient_id == current_user.id, Message.sender_id == doctor.id, Message.sender_type == 'doctor')
+        )
     ).order_by(Message.timestamp.desc()).all()
 
-    return render_template('mcq.html', chat_history=chat_history)
+    return render_template('mcq.html', chat_history=reversed(chat_history), drname=drname)
 
 
 @app.route('/qst', methods=['POST', 'GET'])
@@ -446,6 +494,7 @@ def dr_profile():
         username = request.form.get('username').strip()
         bio = request.form.get('bio').strip()
         profession = request.form.get('profession').strip()
+        license=''
 
         # Handle profile picture upload
         if 'profile_picture' in request.files:
@@ -511,4 +560,4 @@ def dr_mcq():
         else:
             print("Other:", message.content)
         message.content = message.content.replace('\\n', '<br>')
-    return render_template('chat-dr.html', chat_history=chat_history)
+    return render_template('chat-dr.html', chat_history=reversed(chat_history))
