@@ -245,7 +245,7 @@ def chat_message():
         new_message = Message(
             content=message_content,
             sender_id=current_user.id,
-            sender_type='doctor' if isinstance(current_user, Doctor) else 'user',
+            sender_type='user',  # Assuming logged in entity is a user; adjust if needed
             recipient_id=recipient.id,
             recipient_type='doctor'
         )
@@ -254,13 +254,12 @@ def chat_message():
 
     chat_history = Message.query.filter(
         db.or_(
-            db.and_(Message.sender_id == current_user.id, Message.recipient_id == recipient.id),
-            db.and_(Message.recipient_id == current_user.id, Message.sender_id == recipient.id)
+            db.and_(Message.sender_id == current_user.id, Message.recipient_id == recipient.id, Message.sender_type == 'user', Message.recipient_type == 'doctor'),
+            db.and_(Message.recipient_id == current_user.id, Message.sender_id == recipient.id, Message.recipient_type == 'user', Message.sender_type == 'doctor')
         )
     ).order_by(Message.timestamp.desc()).all()
 
-    return render_template('mcq.html', chat_history=reversed(chat_history), drname=recipient_username)
-
+    return render_template('mcq.html', chat_history=list(reversed(chat_history)), drname=recipient_username)
 
 @app.route('/mcq', methods=['GET'])
 @login_required
@@ -272,15 +271,14 @@ def mcq():
         flash('Doctor not found!', 'error')
         return render_template('mcq.html', chat_history=[], drname=drname)
 
-    # Filter messages by current user and the selected doctor
     chat_history = Message.query.filter(
         db.or_(
-            db.and_(Message.sender_id == current_user.id, Message.recipient_id == doctor.id, Message.recipient_type == 'doctor'),
-            db.and_(Message.recipient_id == current_user.id, Message.sender_id == doctor.id, Message.sender_type == 'doctor')
+            db.and_(Message.sender_id == current_user.id, Message.recipient_id == doctor.id, Message.sender_type == 'user', Message.recipient_type == 'doctor'),
+            db.and_(Message.recipient_id == current_user.id, Message.sender_id == doctor.id, Message.recipient_type == 'user', Message.sender_type == 'doctor')
         )
     ).order_by(Message.timestamp.desc()).all()
 
-    return render_template('mcq.html', chat_history=reversed(chat_history), drname=drname)
+    return render_template('mcq.html', chat_history=list(reversed(chat_history)), drname=drname)
 
 
 @app.route('/qst', methods=['POST', 'GET'])
