@@ -19,11 +19,11 @@
                 <div id="chat" class="mb-3">
                 {% for message in chat_history %}
                     {% if message.message_type == 'user' %}
-                        <div class="user-message">{{ message.content }}</div>
+                        <div class="dr-message">{{ message.content }}</div>
                     {% elif message.message_type == 'server' %}
                         <div class="server-message">{{ message.content }}</div>
                     {% elif message.message_type == 'dr' %}
-                        <div class="dr-message">{{ message.content }}</div>
+                        <div class="user-message">{{ message.content }}</div>
                     {% endif %}
                 {% endfor %}
                 </div>

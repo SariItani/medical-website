@@ -1,7 +1,7 @@
 # app/routes.py
 import hashlib
 import time
-from flask import jsonify, redirect, render_template, request, url_for, flash
+from flask import jsonify, redirect, render_template, request, url_for, flash, session
 from flask_login import login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 import requests
@@ -238,7 +238,6 @@ def chat_message():
     recipient = Doctor.query.filter_by(username=recipient_username).first()
 
     if not recipient:
-        flash('Doctor not found!', 'error')
         return render_template('mcq.html', chat_history=[], drname=recipient_username)
 
     if message_content != "":
@@ -268,7 +267,6 @@ def mcq():
     doctor = Doctor.query.filter_by(username=drname).first()
 
     if not doctor:
-        flash('Doctor not found!', 'error')
         return render_template('mcq.html', chat_history=[], drname=drname)
 
     chat_history = Message.query.filter(
@@ -353,8 +351,10 @@ def login():
         else:
             flash('Invalid user type specified.', 'danger')
             return render_template('login.html')
-
+        
         if user and bcrypt.check_password_hash(user.password, password):
+            user_identity = f"{type}:{user.id}"  # Combine type and ID
+            session['user_identity'] = user_identity  # Store in session
             login_user(user)
             flash('Login successful!', 'success')
             if type == 'Doctor':
@@ -362,20 +362,27 @@ def login():
             return redirect(url_for('index'))
         else:
             flash('Login unsuccessful. Please check your username and password.', 'danger')
-
     return render_template('login.html')
 
 @login_manager.user_loader
-def load_user(user_id):
-    # Attempt to fetch from both user tables if needed. Adjust according to your app's logic.
-    user = User.query.get(int(user_id))
-    if user is None:
-        user = Doctor.query.get(int(user_id))
-    return user
+def load_user(user_identity):
+    print(user_identity)
+    if ':' in user_identity:
+        user_type, user_id = user_identity.split(':')  # Split the identity into type and ID
+        user_id = int(user_id)  # Convert ID to integer
+        if user_type == 'Doctor':
+            return Doctor.query.get(user_id)
+        return User.query.get(user_id)
+    else:
+        # Log error or handle cases where the format is incorrect
+        print("Error: user_identity format is incorrect")
+        return None
+
 
 @app.route('/logout')
 @login_required
 def logout():
+    session.pop('user_identity', None)  # Clear the custom user identity
     logout_user()
     return redirect(url_for('login'))
 
@@ -459,6 +466,7 @@ def dr_index():
     username = current_user.username
     imgpath = current_user.imgpath
     bio = current_user.bio
+    print(current_user)
     return render_template('index-drs.html', username=username, imgpath=imgpath, bio=bio)
 
 
@@ -550,12 +558,18 @@ def dr_profile():
 @app.route('/dr/mcq')
 @login_required
 def dr_mcq():
-    user = current_user
-    chat_history = Message.query.filter_by(sender=user).all()
+    doctor = current_user
+    # Ensure that the current user is a doctor
+    chat_history = Message.query.filter(
+        db.or_(
+            db.and_(Message.sender_id == doctor.id, Message.sender_type == 'doctor'),
+            db.and_(Message.recipient_id == doctor.id, Message.recipient_type == 'doctor')
+        )
+    ).order_by(Message.timestamp.desc()).all()
+    
+    # Preparing messages for display, replacing newlines with HTML breaks for browser rendering
     for message in chat_history:
-        if message.message_type == 'user':
-            print("User:", message.content)
-        else:
-            print("Other:", message.content)
         message.content = message.content.replace('\\n', '<br>')
-    return render_template('chat-dr.html', chat_history=reversed(chat_history))
+
+    return render_template('chat-dr.html', chat_history=list(reversed(chat_history)))
+    
